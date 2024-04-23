@@ -1,11 +1,8 @@
 <script lang="ts">
-	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import { AppShell, AppBar, ProgressRadial, Table } from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	$: ({ projectInfos, projectNum } = data);
-
-	import Datatable from '$lib/components/server/Datatable.svelte';
 </script>
 
 <AppShell>
@@ -25,8 +22,15 @@
 		</div>
 	</svelte:fragment>
 
-	<div class="px-12 py-7">
-		<Datatable {projectInfos} {projectNum} />
+	<div class="w-3/4 mx-auto flex flex-col justify-center items-center min-h-screen">
+		{#await data.projectTable}
+			Loading projects...
+			<ProgressRadial />
+		{:then projectTable}
+			<Table source={projectTable} />
+		{:catch error}
+			<p>error loading projects: {error}</p>
+		{/await}
 	</div>
 
 	<svelte:fragment slot="pageFooter">

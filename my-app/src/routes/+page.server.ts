@@ -1,70 +1,39 @@
 import { projects } from '$db/projects';
+import { tableMapperValues } from '@skeletonlabs/skeleton';
 import type { PageServerLoad } from './$types';
-import type { State } from '@vincjo/datatables/remote';
 
-export const load: PageServerLoad = async function (event): Promise<any> {
-	const { url } = event;
-	const state: State = {
-		pageNumber: parseInt(url.searchParams.get('page') || '1'),
-		rowsPerPage: parseInt(url.searchParams.get('limit') || '25'),
-		sort: {
-			orderBy: url.searchParams.get('sort') || '_id',
-			direction: 'asc' //url.searchParams.get('order')
-		},
-		filters: [],
-		search: url.searchParams.get('search') || '',
-		offset: parseInt(url.searchParams.get('offset') || '0'),
-		setTotalRows: () => {},
-		sorted: undefined
-	};
+export const load: PageServerLoad = async () => {
+	const fetchProjectTable = async () => {
+		const projectInfos = await projects
+			.find(
+				{},
+				{
+					limit: 25,
+					projection: {
+						name: 1,
+						owner: 1,
+						creationDate: 1,
+						_id: 1
+					}
+				}
+			)
+			.toArray();
 
-	const { query, options } = getParams(state);
-
-	const fetchProjectInfos = async () => {
-		const projectInfos = await projects.find(query, options).toArray();
-
-		return projectInfos.map((project) => ({
-			...project,
-			_id: project._id.toString() // Convert _id to a string
-		}));
-	};
-
-	const fetchProjectNum = async () => {
-		return await projects.countDocuments();
+		await new Promise((r) => setTimeout(r, 10000));
+		return {
+			head: ['name', 'owner', 'creationDate'],
+			body: tableMapperValues(
+				projectInfos.map((project) => ({
+					...project,
+					_id: project._id.toString() // Convert _id to a string
+				})),
+				['name', 'owner', 'creationDate']
+			),
+			foot: [`Total lines: ${await projects.countDocuments()}`, '', `<code class="code"></code>`]
+		};
 	};
 
 	return {
-		projectInfos: await fetchProjectInfos(),
-		projectNum: await fetchProjectNum()
+		projectTable: fetchProjectTable()
 	};
-};
-
-const getParams = (state: State) => {
-	const { pageNumber, rowsPerPage, sort, filters, search } = state;
-
-	const query: any = {};
-	const options: any = {};
-
-	if (pageNumber && rowsPerPage) {
-		options.skip = (pageNumber - 1) * rowsPerPage;
-		options.limit = rowsPerPage;
-	}
-
-	if (sort) {
-		options.sort = {
-			[sort.orderBy as keyof any]: sort.direction === 'asc' ? 1 : -1
-		};
-	}
-
-	if (filters) {
-		filters.forEach(({ filterBy, value }) => {
-			query[filterBy] = value;
-		});
-	}
-
-	if (search) {
-		query.$text = { $search: search };
-	}
-
-	return { query, options };
 };
