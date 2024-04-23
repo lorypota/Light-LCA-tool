@@ -1,4 +1,4 @@
-import { projects } from '$db/projects';
+import { projects } from '$lib/db/projects';
 import { tableMapperValues } from '@skeletonlabs/skeleton';
 import type { PageServerLoad } from './$types';
 
