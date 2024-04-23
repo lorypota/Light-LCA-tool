@@ -1,3 +1,31 @@
 import db from '$lib/db/mongo';
+import type { Project } from '$lib/interfaces';
 
-export const projects = db.collection('projects');
+const projects = db.collection<Project>('projects');
+export const getProjectsArray = async (limit: number = 25) => {
+	// TODO: add also pagination
+	const projectsArray = await projects
+		.find(
+			{},
+			{
+				limit,
+				projection: {
+					name: 1,
+					owner: 1,
+					creationDate: 1,
+					id: 1,
+					_id: 0
+				}
+			}
+		)
+		.toArray();
+	return projectsArray;
+};
+
+export const countProjects = async () => {
+	return await projects.countDocuments();
+};
+
+export const getProjectByID = async (id: string) => {
+	return await projects.findOne({ id }, { projection: { _id: 0 } });
+};
