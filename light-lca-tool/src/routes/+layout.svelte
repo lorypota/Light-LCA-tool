@@ -20,6 +20,8 @@
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
+
+	import page_indicator from '$lib/page_indicator';
 </script>
 
 <AppShell>
@@ -30,8 +32,14 @@
 				slotDefault="place-self-center"
 				slotTrail="place-content-end"
 			>
-				<svelte:fragment slot="lead">Admin-user panel</svelte:fragment>
-				Light LCA tool - Project Selection
+				<svelte:fragment slot="lead">Admin-user panel - Light LCA tool</svelte:fragment>
+				<ol class="breadcrumb mt-1">
+					{#if $page_indicator != 'Selection'}
+						<a class="anchor" href="/">Selection</a>
+						<li class="crumb-separator" aria-hidden>&rsaquo;</li>
+					{/if}
+					<li>{$page_indicator} page</li>
+				</ol>
 				<svelte:fragment slot="trail">
 					<button>Logout</button>
 				</svelte:fragment>

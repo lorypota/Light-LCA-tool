@@ -3,6 +3,9 @@
 	import type { PageData } from './$types';
 	import type { Project } from '$lib/interfaces';
 	import { goto } from '$app/navigation';
+	import page_indicator from '$lib/page_indicator';
+
+	$page_indicator = 'Selection';
 
 	export let data: PageData;
 	const totalProjects = data.totalProjects;
@@ -18,7 +21,6 @@
 
 	const onSelected = (event: CustomEvent) => {
 		const projectID = event.detail[0];
-		console.log('projectID:', projectID);
 		goto(`/project/${projectID}`);
 	};
 </script>
