@@ -1,10 +1,6 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	import page_indicator from '$lib/page_indicator';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 
-	$page_indicator = 'Editing';
-
-	export let data: PageData;
+	goto(`${$page.url.pathname}/general`);
 </script>
-
-<p>{data.project.id}</p>

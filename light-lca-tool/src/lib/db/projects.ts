@@ -1,5 +1,5 @@
 import db from '$lib/db/mongo';
-import type { Project } from '$lib/interfaces';
+import type { Project, ProjectStatus } from '$lib/interfaces';
 
 const projects = db.collection<Project>('projects');
 export const getProjectsArray = async (limit: number = 25) => {
@@ -28,4 +28,12 @@ export const countProjects = async () => {
 
 export const getProjectByID = async (id: string) => {
 	return await projects.findOne({ id }, { projection: { _id: 0 } });
+};
+
+export const updateProjectByID = async (id: string, project: Partial<Project>) => {
+	return await projects.updateOne({ id }, { $set: project });
+};
+
+export const changeStatusByID = async (id: string, newStatus: ProjectStatus) => {
+	return await projects.updateOne({ id }, { $set: { status: newStatus } });
 };

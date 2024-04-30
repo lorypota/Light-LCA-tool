@@ -1,5 +1,4 @@
 import { countProjects, getProjectsArray } from '$lib/db/projects';
-import { tableMapperValues } from '@skeletonlabs/skeleton';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {

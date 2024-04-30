@@ -1,6 +1,6 @@
 export enum ProjectStatus {
 	Draft = 'Draft',
-	Completed = 'Completed'
+	Completed = 'Complete'
 }
 
 export interface Project {

@@ -3,9 +3,9 @@
 	import type { PageData } from './$types';
 	import type { Project } from '$lib/interfaces';
 	import { goto } from '$app/navigation';
-	import page_indicator from '$lib/page_indicator';
 
-	$page_indicator = 'Selection';
+	import page_indicator from '$lib/page_indicator';
+	$page_indicator = `Selection`;
 
 	export let data: PageData;
 	const totalProjects = data.totalProjects;
@@ -28,7 +28,7 @@
 {#await data.projectInfos}
 	<ProgressRadial>{'Loading projects...'}</ProgressRadial>
 {:then projectInfos}
-	<div class="overflow-y-scroll max-h-[800px] min-w-[1200px]">
+	<div class="overflow-y-scroll max-h-[500px] min-w-[1200px]">
 		<Table source={transformToTableSource(projectInfos)} interactive on:selected={onSelected} />
 	</div>
 {:catch error}
