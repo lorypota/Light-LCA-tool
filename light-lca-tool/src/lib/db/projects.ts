@@ -14,6 +14,7 @@ export const getProjectsArray = async (limit: number = 25) => {
 					owner: 1,
 					creationDate: 1,
 					id: 1,
+					areaOfProduction: 1,
 					_id: 0
 				}
 			}

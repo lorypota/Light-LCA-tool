@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
 	import { areProjectsEqual, formatDate } from '$lib/utils';
-	import { AlertType, ProjectStatus, type Project } from '$lib/interfaces';
+	import { AlertType, ProjectAreaOfProduction, ProjectStatus, type Project } from '$lib/interfaces';
 	import Icon from '@iconify/svelte';
 	import { tick } from 'svelte';
 	import Alert from '$lib/components/Alert.svelte';
@@ -9,6 +9,9 @@
 	export let data: PageData;
 
 	const statusOptions = Object.values(ProjectStatus).filter((value) => typeof value === 'string');
+	const areaOfProductionOptions = Object.values(ProjectAreaOfProduction).filter(
+		(value) => typeof value === 'string'
+	);
 
 	let showSaveButton = false;
 
@@ -90,14 +93,16 @@
 		</div>
 		<div class="flex items-center">
 			<label class="w-1/3" for="areaOfProduction">Area of production:</label>
-			<input
+			<select
 				id="areaOfProduction"
 				name="areaOfProduction"
-				maxlength="36"
-				class="input variant-form-material flex-1"
+				class="select variant-form-material flex-1"
 				bind:value={projectToModify.areaOfProduction}
-				required
-			/>
+			>
+				{#each areaOfProductionOptions as areaOfProduction}
+					<option value={areaOfProduction}>{areaOfProduction}</option>
+				{/each}
+			</select>
 		</div>
 		<div class="flex items-center">
 			<label class="w-1/3" for="projectStatus">Project status:</label>

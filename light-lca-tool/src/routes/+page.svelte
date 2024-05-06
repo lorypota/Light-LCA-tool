@@ -12,8 +12,8 @@
 
 	const transformToTableSource = (projectsArray: Project[]) => {
 		return {
-			head: ['name', 'owner', 'creationDate'],
-			body: tableMapperValues(projectsArray, ['name', 'owner', 'creationDate']),
+			head: ['name', 'owner', 'creationDate', 'areaOfProduction'],
+			body: tableMapperValues(projectsArray, ['name', 'owner', 'creationDate', 'areaOfProduction']),
 			meta: tableMapperValues(projectsArray, ['id']),
 			foot: [`Total lines: ${totalProjects}`, '', `<code class="code"></code>`]
 		};

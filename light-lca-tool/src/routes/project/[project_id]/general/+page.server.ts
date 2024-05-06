@@ -1,7 +1,7 @@
 import { error, fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getProjectByID, updateProjectByID } from '$lib/db/projects';
-import type { Project, ProjectStatus } from '$lib/interfaces';
+import type { Project, ProjectAreaOfProduction, ProjectStatus } from '$lib/interfaces';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const project = await getProjectByID(params.project_id);
@@ -25,7 +25,7 @@ export const actions: Actions = {
 		const name = data.get('name') as string;
 		const owner = data.get('owner') as string;
 		const creationDate = data.get('creationDate') as string;
-		const areaOfProduction = data.get('areaOfProduction') as string;
+		const areaOfProduction = data.get('areaOfProduction') as ProjectAreaOfProduction;
 		const projectStatus = data.get('projectStatus') as ProjectStatus;
 
 		const project = {
