@@ -1,79 +1,109 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
-	import { ProjectStatus, type Project } from '$lib/interfaces';
+	import { areProjectsEqual, formatDate } from '$lib/utils';
+	import { AlertType, ProjectStatus, type Project } from '$lib/interfaces';
 	import Icon from '@iconify/svelte';
+	import { tick } from 'svelte';
+	import Alert from '$lib/components/Alert.svelte';
 
 	export let data: PageData;
-	let projectToModify: Project = { ...data.project };
 
 	const statusOptions = Object.values(ProjectStatus).filter((value) => typeof value === 'string');
 
 	let showSaveButton = false;
 
-	const areProjectsEqual = (project1: Project, project2: Project): boolean => {
-		return (
-			project1.name === project2.name &&
-			project1.owner === project2.owner &&
-			project1.creationDate === project2.creationDate &&
-			project1.areaOfProduction === project2.areaOfProduction &&
-			project1.status === project2.status &&
-			project1.efficiency === project2.efficiency &&
-			project1.electricityUse === project2.electricityUse &&
-			project1.id === project2.id &&
-			project1.useEnergyMix === project2.useEnergyMix
-		);
-	};
-
-	$: {
-		showSaveButton = !areProjectsEqual(data.project, projectToModify);
+	let oldProject = { ...data.project };
+	let oldDateFormatted: string | Date;
+	if (oldProject.creationDate != null) {
+		oldDateFormatted = formatDate(oldProject.creationDate);
 	}
+	let projectToModify: Project = { ...oldProject };
 
-	const saveChanges = () => {
-		console.log('Old: ', data.project);
-		console.log('New: ', projectToModify);
-	};
+	$: showSaveButton =
+		!areProjectsEqual(oldProject, projectToModify) ||
+		(projectToModify.creationDate != undefined &&
+			formatDate(oldDateFormatted) != formatDate(projectToModify.creationDate));
+
+	let ref: HTMLInputElement;
+	async function handleFocusDate() {
+		ref.type = 'Date';
+		await tick();
+		ref.select();
+	}
+	async function handleBlurDate() {
+		ref.type = 'text';
+		await tick();
+		ref.textContent = formatDate(oldDateFormatted);
+	}
 
 	export let form: ActionData;
 </script>
 
 <div class="w-full text-center">
 	<form class="w-full flex flex-col gap-4" method="POST">
+		<Alert title="Error" visible={form?.error} message={form?.message} variant={AlertType.error} />
+
+		<Alert
+			title="Success"
+			visible={form?.success}
+			message={form?.message}
+			variant={AlertType.success}
+		/>
 		<div class="flex items-center">
 			<label class="w-1/3" for="name">Project name:</label>
 			<input
 				id="name"
+				name="name"
+				type="text"
+				maxlength="36"
 				class="input variant-form-material flex-1"
 				bind:value={projectToModify.name}
+				required
 			/>
 		</div>
 		<div class="flex items-center">
 			<label class="w-1/3" for="owner">Owner:</label>
 			<input
 				id="owner"
+				name="owner"
+				type="text"
+				maxlength="36"
 				class="input variant-form-material flex-1"
 				bind:value={projectToModify.owner}
+				required
 			/>
 		</div>
 		<div class="flex items-center">
 			<label class="w-1/3" for="creationDate">Creation date:</label>
 			<input
 				id="creationDate"
+				name="creationDate"
+				type="text"
+				maxlength="36"
 				class="input variant-form-material flex-1"
-				bind:value={projectToModify.creationDate}
+				on:focus={async () => handleFocusDate()}
+				on:blur={async () => handleBlurDate()}
+				bind:this={ref}
+				bind:value={oldDateFormatted}
+				required
 			/>
 		</div>
 		<div class="flex items-center">
 			<label class="w-1/3" for="areaOfProduction">Area of production:</label>
 			<input
 				id="areaOfProduction"
+				name="areaOfProduction"
+				maxlength="36"
 				class="input variant-form-material flex-1"
 				bind:value={projectToModify.areaOfProduction}
+				required
 			/>
 		</div>
 		<div class="flex items-center">
 			<label class="w-1/3" for="projectStatus">Project status:</label>
 			<select
 				id="projectStatus"
+				name="projectStatus"
 				class="select variant-form-material flex-1"
 				bind:value={projectToModify.status}
 			>
@@ -82,35 +112,11 @@
 				{/each}
 			</select>
 		</div>
-		{#if showSaveButton}
-			<div class="items-center">
-				<button type="button" class="btn variant-filled w-1/2">
-					<span><Icon icon="lucide:save" inline={true} /></span>
-					<span>Save</span>
-				</button>
-			</div>
-		{/if}
+		<div class="items-center">
+			<button disabled={!showSaveButton} class="btn variant-filled w-1/2">
+				<span><Icon icon="lucide:save" inline={true} /></span>
+				<span>Save</span>
+			</button>
+		</div>
 	</form>
-	{#if form?.status === 400}
-		<aside class="alert variant-filled-error">
-			<!-- Icon -->
-			<div>(icon)</div>
-			<!-- Message -->
-			<div class="alert-message">
-				<h3 class="h3">Status 400</h3>
-				<p>{form?.body}</p>
-			</div>
-		</aside>
-	{/if}
-	{#if form?.status === 200}
-		<aside class="alert variant-filled-success">
-			<!-- Icon -->
-			<div>(icon)</div>
-			<!-- Message -->
-			<div class="alert-message">
-				<h3 class="h3">Status 200</h3>
-				<p>{form?.body}</p>
-			</div>
-		</aside>
-	{/if}
 </div>

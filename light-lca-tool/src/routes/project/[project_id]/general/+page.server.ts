@@ -1,4 +1,4 @@
-import { error, type Actions } from '@sveltejs/kit';
+import { error, fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getProjectByID, updateProjectByID } from '$lib/db/projects';
 import type { Project, ProjectStatus } from '$lib/interfaces';
@@ -14,21 +14,29 @@ export const load: PageServerLoad = async ({ params }) => {
 export const actions: Actions = {
 	default: async ({ params, request }) => {
 		const { project_id } = params;
-		console.log(project_id);
 		if (!project_id) {
-			return { status: 400, body: { message: 'Project ID not provided' } };
+			return fail(400, {
+				error: true,
+				message: 'Project ID not provided'
+			});
 		}
 		const data = await request.formData();
 
+		const name = data.get('name') as string;
+		const owner = data.get('owner') as string;
+		const creationDate = data.get('creationDate') as string;
+		const areaOfProduction = data.get('areaOfProduction') as string;
+		const projectStatus = data.get('projectStatus') as ProjectStatus;
+
 		const project = {
-			name: data.get('name') as string,
-			owner: data.get('owner') as string,
-			creationDate: new Date(data.get('creationDate') as string),
-			areaOfProduction: data.get('areaOfProduction') as string,
-			projectStatus: data.get('projectStatus') as ProjectStatus
+			name: name,
+			owner: owner,
+			creationDate: creationDate,
+			areaOfProduction: areaOfProduction,
+			status: projectStatus
 		} as Partial<Project>;
 
 		await updateProjectByID(project_id, project);
-		return { status: 200, body: { message: 'Project updated' } };
+		return { success: true, message: 'Project updated' };
 	}
 } satisfies Actions;
