@@ -2,13 +2,13 @@ import db from '$lib/db/mongo';
 import type { Project } from '$lib/interfaces';
 
 const projects = db.collection<Project>('projects');
-export const getProjectsArray = async (limit: number = 25) => {
-	// TODO: add also pagination
+export const getProjectsArray = async (limit: number = 10, skip: number = 0) => {
 	const projectsArray = await projects
 		.find(
 			{},
 			{
 				limit,
+				skip,
 				projection: {
 					name: 1,
 					owner: 1,
