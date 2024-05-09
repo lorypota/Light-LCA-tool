@@ -1,8 +1,6 @@
-import db from '$lib/db/mongo';
 import type { Project, ProjectStatus } from '$lib/interfaces';
 
-const projects = db.collection<Project>('projects');
-export const getProjectsArray = async (limit: number = 25) => {
+export const getProjectsArray = async (projects: any, limit: number = 25) => {
 	// TODO: add also pagination
 	const projectsArray = await projects
 		.find(
@@ -23,18 +21,28 @@ export const getProjectsArray = async (limit: number = 25) => {
 	return projectsArray;
 };
 
-export const countProjects = async () => {
+export const countProjects = async (projects: any) => {
 	return await projects.countDocuments();
 };
 
-export const getProjectByID = async (id: string) => {
+export const getProjectByID = async (projects: any, id: string) => {
 	return await projects.findOne({ id }, { projection: { _id: 0 } });
 };
 
-export const updateProjectByID = async (id: string, project: Partial<Project>) => {
-	return await projects.updateOne({ id }, { $set: project });
+// functions have always two arguments (for Wrapper, see src/db/mongo.ts)
+// if function need more than two arguments, pass an object as second argument
+type UpdateProjectByIDArgs = {
+	id: string;
+	project: Partial<Project>;
+};
+export const updateProjectByID = async (projects: any, args: UpdateProjectByIDArgs) => {
+	return await projects.updateOne({ id: args.id }, { $set: args.project });
 };
 
-export const changeStatusByID = async (id: string, newStatus: ProjectStatus) => {
-	return await projects.updateOne({ id }, { $set: { status: newStatus } });
+type ChangeStatusByIDArgs = {
+	id: string;
+	newStatus: ProjectStatus;
+};
+export const changeStatusByID = async (projects: any, args: ChangeStatusByIDArgs) => {
+	return await projects.updateOne({ id: args.id }, { $set: { status: args.newStatus } });
 };
