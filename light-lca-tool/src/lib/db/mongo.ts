@@ -29,7 +29,7 @@ export const functionMongoWrapper = async <R>(
 		try {
 			client = await getMongoClient();
 			// connected to MongoDB
-			let collection = client.db().collection(collectionName);
+			const collection = client.db().collection(collectionName);
 			if (params === null) result = await func(collection);
 			else result = await func(collection, params);
 			await closeMongoClient(client);

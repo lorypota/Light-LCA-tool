@@ -13,6 +13,7 @@
 	import page_indicator from '$lib/page_indicator';
 	$page_indicator = `Selection`;
 	import { page } from '$app/stores';
+	import Icon from '@iconify/svelte';
 
 	export let data: PageData;
 	$: totalProjects = data.totalProjects;
@@ -33,15 +34,16 @@
 
 	const transformToTableSource = (projectsArray: Project[]) => {
 		return {
-			head: ['name', 'owner', 'creationDate', 'areaOfProduction'],
+			head: ['name', 'owner', 'Creation date', 'Area of production'],
 			body: tableMapperValues(projectsArray, ['name', 'owner', 'creationDate', 'areaOfProduction']),
 			meta: tableMapperValues(projectsArray, ['id']),
 			foot: [`Total lines: ${totalProjects}`]
 		};
 	};
 
-	const onSelected = (e: CustomEvent) => {
-		const projectID = e.detail[0];
+	const onSelected = (event: CustomEvent) => {
+		const projectID = event.detail[0];
+		console.log('projectID:', projectID);
 		goto(`/project/${projectID}`);
 	};
 
@@ -80,22 +82,33 @@
 	<ProgressRadial>{'Loading projects...'}</ProgressRadial>
 {:then projectInfos}
 	<div class="w-full min-w-[500px]">
-		<div class="flex flex-row justify-evenly items-center">
+		<div class="flex flex-row justify-between items-center">
 			<!-- TODO: improve UI by putting select inside of input text search -->
+			<a href="/newProject" class="btn variant-filled">
+				<span>
+					<Icon icon="lucide:circle-plus" />
+				</span>
+				<span>Create a new project</span>
+			</a>
 
-			<select class="selectSearch" bind:value={selectSearch}>
-				<option value="name">Name</option>
-				<option value="id">ID</option>
-				<option value="owner">Owner</option>
-				<option value="creationDate">Creation date</option>
-			</select>
+			<div class="flex flex-row w-1/2 items-center content-end justify-between">
+				<select class="selectSearch" bind:value={selectSearch}>
+					<option value="name">Name</option>
+					<option value="id">ID</option>
+					<option value="owner">Owner</option>
+					<option value="creationDate">Creation date</option>
+					<option value="areaOfProduction">Area of production</option>
+				</select>
 
-			<div class="w-1/3 input-group input-group-divider grid-cols-[auto_1fr_auto]">
-				<div class="input-group-shim"><!-- <Icon icon="lucide:search" /> -->🔍</div>
-				<input type="search" placeholder="Filter ..." bind:value={searchString} />
-				<button class="variant-filled-secondary" on:click={() => updateUrlState(true)}>
-					Submit
-				</button>
+				<div class="w-9/12 input-group input-group-divider grid-cols-[auto_1fr_auto]">
+					<div class="input-group-shim">
+						<Icon icon="lucide:search" />
+					</div>
+					<input type="search" placeholder="Filter ..." bind:value={searchString} />
+					<button class="variant-filled-secondary" on:click={() => updateUrlState(true)}>
+						Submit
+					</button>
+				</div>
 			</div>
 		</div>
 
