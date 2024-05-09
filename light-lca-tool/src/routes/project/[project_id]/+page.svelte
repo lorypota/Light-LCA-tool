@@ -1,7 +1,6 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 
-	export let data: PageData;
+	goto(`${$page.url.pathname}/general`);
 </script>
-
-<p>{data.project.id}</p>

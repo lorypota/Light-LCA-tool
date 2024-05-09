@@ -9,11 +9,15 @@
 	import type { PageData } from './$types';
 	import type { Project } from '$lib/interfaces';
 	import { goto } from '$app/navigation';
+
+	import page_indicator from '$lib/page_indicator';
+	$page_indicator = `Selection`;
 	import { page } from '$app/stores';
 
 	export let data: PageData;
-	let totalProjects;
 	$: totalProjects = data.totalProjects;
+
+	$: dataProjectInfos = data.projectInfos;
 
 	let paginationSettings = {
 		page: Number($page.url.searchParams.get('skip')) || 0,
@@ -29,8 +33,8 @@
 
 	const transformToTableSource = (projectsArray: Project[]) => {
 		return {
-			head: ['name', 'owner', 'creationDate'],
-			body: tableMapperValues(projectsArray, ['name', 'owner', 'creationDate']),
+			head: ['name', 'owner', 'creationDate', 'areaOfProduction'],
+			body: tableMapperValues(projectsArray, ['name', 'owner', 'creationDate', 'areaOfProduction']),
 			meta: tableMapperValues(projectsArray, ['id']),
 			foot: [`Total lines: ${totalProjects}`]
 		};
@@ -72,7 +76,7 @@
 	};
 </script>
 
-{#await data.projectInfos}
+{#await dataProjectInfos}
 	<ProgressRadial>{'Loading projects...'}</ProgressRadial>
 {:then projectInfos}
 	<div class="w-full min-w-[500px]">

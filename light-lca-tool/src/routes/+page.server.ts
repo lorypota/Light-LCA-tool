@@ -1,6 +1,8 @@
 import { countProjects, getProjectsArray } from '$lib/db/projects';
 import type { PageServerLoad } from './$types';
-import { error, fail } from '@sveltejs/kit';
+import { functionMongoWrapper } from '$lib/db/mongo';
+import { PROJECTS_COLLECTION } from '$lib/const';
+import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const limit = Number(url.searchParams.get('limit')) || 10;
@@ -8,19 +10,29 @@ export const load: PageServerLoad = async ({ url }) => {
 	const searchString = url.searchParams.get('search') as string;
 	const filter = url.searchParams.get('filter') as string;
 
-	let numProjects: number = await countProjects(filter, searchString);
+	try {
+		const totalProjects: number = await functionMongoWrapper(PROJECTS_COLLECTION, countProjects, {
+			filter,
+			searchString
+		});
 
-	if (numProjects === 0) {
-		error(404, { message: 'No project found' });
+		if (totalProjects === 0) {
+			error(404, { message: 'No project found' });
+		}
+
+		if (skip > totalProjects || limit < 1 || skip < 0) {
+			error(400, { message: 'Bad request' });
+		}
+
+		const projectInfos = await functionMongoWrapper(PROJECTS_COLLECTION, getProjectsArray, {
+			filter,
+			searchString,
+			limit,
+			skip
+		});
+
+		return { projectInfos, totalProjects };
+	} catch {
+		error(500, 'MongoDB Error, is MongoDB running?');
 	}
-
-	if (skip > numProjects || limit < 1 || skip < 0) {
-		error(400, { message: 'Bad request' });
-	}
-
-	const loadProjects = async () => {
-		return await getProjectsArray(filter, searchString, limit, skip);
-	};
-
-	return { projectInfos: loadProjects(), totalProjects: numProjects };
 };
