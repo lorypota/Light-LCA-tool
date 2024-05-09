@@ -1,41 +1,37 @@
 <script lang="ts">
-	import { AppShell, AppBar, ProgressRadial, Table } from '@skeletonlabs/skeleton';
+	import { ProgressRadial, Table, tableMapperValues } from '@skeletonlabs/skeleton';
 	import type { PageData } from './$types';
+	import type { Project } from '$lib/interfaces';
+	import { goto } from '$app/navigation';
+
+	import page_indicator from '$lib/page_indicator';
+	$page_indicator = `Selection`;
 
 	export let data: PageData;
+	$: dataProjectInfos = data.projectInfos;
+	$: totalProjects = data.totalProjects;
+
+	const transformToTableSource = (projectsArray: Project[]) => {
+		return {
+			head: ['name', 'owner', 'creationDate', 'areaOfProduction'],
+			body: tableMapperValues(projectsArray, ['name', 'owner', 'creationDate', 'areaOfProduction']),
+			meta: tableMapperValues(projectsArray, ['id']),
+			foot: [`Total lines: ${totalProjects}`, '', `<code class="code"></code>`]
+		};
+	};
+
+	const onSelected = (event: CustomEvent) => {
+		const projectID = event.detail[0];
+		goto(`/project/${projectID}`);
+	};
 </script>
 
-<AppShell>
-	<svelte:fragment slot="header">
-		<div class="bg-gray-200">
-			<AppBar
-				gridColumns="grid-cols-3"
-				slotDefault="place-self-center"
-				slotTrail="place-content-end"
-			>
-				<svelte:fragment slot="lead">Admin-user pane</svelte:fragment>
-				Light LCA tool - Project Selection
-				<svelte:fragment slot="trail">
-					<button>Logout</button>
-				</svelte:fragment>
-			</AppBar>
-		</div>
-	</svelte:fragment>
-
-	<div class="w-3/4 mx-auto flex flex-col justify-center items-center min-h-screen">
-		{#await data.projectTable}
-			Loading projects...
-			<ProgressRadial />
-		{:then projectTable}
-			<Table source={projectTable} />
-		{:catch error}
-			<p>error loading projects: {error}</p>
-		{/await}
+{#await dataProjectInfos}
+	<ProgressRadial>{'Loading projects...'}</ProgressRadial>
+{:then projectInfos}
+	<div class="overflow-y-scroll max-h-[500px] min-w-[1200px]">
+		<Table source={transformToTableSource(projectInfos)} interactive on:selected={onSelected} />
 	</div>
-
-	<svelte:fragment slot="pageFooter">
-		<div class="bg-gray-400">
-			<AppBar>Page footer</AppBar>
-		</div>
-	</svelte:fragment>
-</AppShell>
+{:catch error}
+	<p>error loading projects: {error}</p>
+{/await}
