@@ -47,8 +47,10 @@
 		</div>
 	</svelte:fragment>
 
-	<div class="w-3/4 mx-auto flex flex-col justify-center items-center my-10">
-		<slot />
+	<div class=" h-full">
+		<div class="mx-auto flex flex-col justify-center items-center w-3/4 h-full">
+			<slot />
+		</div>
 	</div>
 
 	<svelte:fragment slot="pageFooter">

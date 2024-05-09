@@ -8,7 +8,8 @@
 	$page_indicator = `Selection`;
 
 	export let data: PageData;
-	const totalProjects = data.totalProjects;
+	$: dataProjectInfos = data.projectInfos;
+	$: totalProjects = data.totalProjects;
 
 	const transformToTableSource = (projectsArray: Project[]) => {
 		return {
@@ -25,7 +26,7 @@
 	};
 </script>
 
-{#await data.projectInfos}
+{#await dataProjectInfos}
 	<ProgressRadial>{'Loading projects...'}</ProgressRadial>
 {:then projectInfos}
 	<div class="overflow-y-scroll max-h-[500px] min-w-[1200px]">

@@ -2,9 +2,15 @@ import { error, fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getProjectByID, updateProjectByID } from '$lib/db/projects';
 import type { Project, ProjectAreaOfProduction, ProjectStatus } from '$lib/interfaces';
+import { functionMongoWrapper } from '$lib/db/mongo';
+import { PROJECTS_COLLECTION } from '$lib/const';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const project = await getProjectByID(params.project_id);
+	const project = await functionMongoWrapper(
+		PROJECTS_COLLECTION,
+		getProjectByID,
+		params.project_id
+	);
 	if (project) {
 		return { project };
 	}
@@ -36,7 +42,7 @@ export const actions: Actions = {
 			status: projectStatus
 		} as Partial<Project>;
 
-		await updateProjectByID(project_id, project);
+		await functionMongoWrapper(PROJECTS_COLLECTION, updateProjectByID, { project_id, project });
 		return { success: true, message: 'Project updated' };
 	}
 } satisfies Actions;
