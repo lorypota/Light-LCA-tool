@@ -30,8 +30,8 @@ export interface Project {
 	name: string;
 	owner: string;
 	creationDate?: Date | string;
-	areaOfProduction?: ProjectAreaOfProduction;
 	status?: ProjectStatus;
+	areaOfProduction?: ProjectAreaOfProduction;
 	efficiency?: number;
 	useEnergyMix?: number;
 	electricityUse?: number;

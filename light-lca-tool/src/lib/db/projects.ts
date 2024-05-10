@@ -80,7 +80,7 @@ export const createNewProject = async (
 		name,
 		owner,
 		areaOfProduction,
-		creationDate: new Date().toISOString(),
+		creationDate: new Date(),
 		status: ProjectStatus.Draft
 	};
 

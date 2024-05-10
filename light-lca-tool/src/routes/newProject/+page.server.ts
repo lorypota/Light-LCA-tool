@@ -2,7 +2,7 @@ import { PROJECTS_COLLECTION } from '$lib/const';
 import { functionMongoWrapper } from '$lib/db/mongo';
 import { createNewProject } from '$lib/db/projects';
 import { ProjectStatus, type Project, type ProjectAreaOfProduction } from '$lib/interfaces';
-import { error, type Actions } from '@sveltejs/kit';
+import { error, fail, type Actions } from '@sveltejs/kit';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -12,7 +12,6 @@ export const actions: Actions = {
 		const owner = data.get('owner') as string;
 		const areaOfProduction = data.get('areaOfProduction') as ProjectAreaOfProduction;
 
-		// insert inside creation date a current date of the current day
 		const project = {
 			name: name,
 			owner: owner,
