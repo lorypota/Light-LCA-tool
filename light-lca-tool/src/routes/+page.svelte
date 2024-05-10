@@ -42,7 +42,6 @@
 
 	const onSelected = (event: CustomEvent) => {
 		const projectID = event.detail[0];
-		console.log('projectID:', projectID);
 		goto(`/project/${projectID}`);
 	};
 

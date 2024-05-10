@@ -4,16 +4,27 @@ import { getProjectByID, updateProjectByID } from '$lib/db/projects';
 import type { Project, ProjectAreaOfProduction, ProjectStatus } from '$lib/interfaces';
 import { functionMongoWrapper } from '$lib/db/mongo';
 import { PROJECTS_COLLECTION } from '$lib/const';
-import { serializeProject } from '$lib/utils';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const project: Project = await functionMongoWrapper(
+	const { project_id } = params;
+	if (!project_id) {
+		return fail(400, {
+			error: true,
+			message: 'Project ID not provided'
+		});
+	}
+
+	const { creationDate, ...projectWithoutDate }: Project = await functionMongoWrapper(
 		PROJECTS_COLLECTION,
 		getProjectByID,
-		params.project_id
+		project_id
 	);
-	if (project) {
-		return { project };
+
+	if (projectWithoutDate) {
+		return {
+			creationDate: creationDate ? new Date(creationDate) : null,
+			projectWithoutDate
+		};
 	}
 	error(404, 'Not found');
 };
@@ -31,16 +42,16 @@ export const actions: Actions = {
 
 		const name = data.get('name') as string;
 		const owner = data.get('owner') as string;
-		const creationDate = data.get('creationDate') as string;
+		const creationDate = new Date(data.get('creationDate') as string);
 		const areaOfProduction = data.get('areaOfProduction') as ProjectAreaOfProduction;
-		const projectStatus = data.get('projectStatus') as ProjectStatus;
+		const status = data.get('status') as ProjectStatus;
 
 		const project = {
-			name: name,
-			owner: owner,
-			creationDate: creationDate,
-			areaOfProduction: areaOfProduction,
-			status: projectStatus
+			name,
+			owner,
+			creationDate,
+			areaOfProduction,
+			status
 		} as Project;
 
 		await functionMongoWrapper(PROJECTS_COLLECTION, updateProjectByID, {

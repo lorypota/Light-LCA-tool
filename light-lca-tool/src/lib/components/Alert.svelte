@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { AlertType } from '$lib/interfaces';
 	import Icon from '@iconify/svelte';
 
@@ -6,6 +7,8 @@
 	export let title: string = '';
 	export let message: string = '';
 	export let variant: AlertType = AlertType.error;
+	export let redirectURL: string = '';
+	export let redirectName: string = '';
 
 	const toggleVisible = () => {
 		visible = false;
@@ -29,7 +32,12 @@
 		</div>
 		<!-- Actions -->
 		<div class="alert-actions">
-			<button on:click={toggleVisible}>Dismiss</button>
+			<button on:click={toggleVisible}> Dismiss </button>
+			{#if redirectURL !== ''}
+				<button on:click={() => goto(redirectURL)}>
+					Back to {redirectName}.
+				</button>
+			{/if}
 		</div>
 	</aside>
 {/if}

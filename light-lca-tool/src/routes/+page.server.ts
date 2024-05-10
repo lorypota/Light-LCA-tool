@@ -17,10 +17,6 @@ export const load: PageServerLoad = async ({ url }) => {
 			searchString
 		});
 
-		if (totalProjects === 0) {
-			error(404, { message: 'No project found' });
-		}
-
 		if (skip > totalProjects || limit < 1 || skip < 0) {
 			error(400, { message: 'Bad request' });
 		}

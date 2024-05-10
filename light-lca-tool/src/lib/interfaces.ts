@@ -29,7 +29,7 @@ export interface Project {
 	_id: ObjectId;
 	name: string;
 	owner: string;
-	creationDate?: Date | string;
+	creationDate?: Date;
 	status?: ProjectStatus;
 	areaOfProduction?: ProjectAreaOfProduction;
 	efficiency?: number;

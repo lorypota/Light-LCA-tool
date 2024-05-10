@@ -20,6 +20,8 @@
 		visible={form?.success}
 		message={form?.message}
 		variant={AlertType.success}
+		redirectURL="/"
+		redirectName="selection"
 	/>
 
 	<h1 class="text-2xl font-bold mb-4">Create a new project</h1>
