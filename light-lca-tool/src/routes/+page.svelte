@@ -17,7 +17,6 @@
 
 	export let data: PageData;
 	$: totalProjects = data.totalProjects;
-
 	$: dataProjectInfos = data.projectInfos;
 
 	let paginationSettings = {
@@ -34,7 +33,7 @@
 
 	const transformToTableSource = (projectsArray: Project[]) => {
 		return {
-			head: ['name', 'owner', 'Creation date', 'Area of production'],
+			head: ['name', 'owner', 'Creation date', 'Production area'],
 			body: tableMapperValues(projectsArray, ['name', 'owner', 'creationDate', 'areaOfProduction']),
 			meta: tableMapperValues(projectsArray, ['_id']),
 			foot: [`Total lines: ${totalProjects}`]
@@ -81,34 +80,32 @@
 {#await dataProjectInfos}
 	<ProgressRadial>{'Loading projects...'}</ProgressRadial>
 {:then projectInfos}
-	<div class="w-full min-w-[500px]">
+	<div class="w-full min-w-fit">
 		<div class="flex flex-row justify-between items-center">
-			<!-- TODO: improve UI by putting select inside of input text search -->
-			<a href="/newProject" class="btn variant-filled">
+			<a href="/newProject" class="btn variant-filled mr-4">
 				<span>
 					<Icon icon="lucide:circle-plus" />
 				</span>
 				<span>Create a new project</span>
 			</a>
 
-			<div class="flex flex-row w-1/2 items-center content-end justify-between">
-				<select class="selectSearch" bind:value={selectSearch}>
+			<div class="w-1/2 min-w-fit input-group input-group-divider grid-cols-[auto_1fr_auto] ml-4">
+				<div class="input-group-shim">
+					<Icon icon="lucide:search" />
+				</div>
+				<input
+					type="search"
+					placeholder="Filter ..."
+					bind:value={searchString}
+					on:change={() => updateUrlState(true)}
+				/>
+				<select bind:value={selectSearch}>
 					<option value="name">Name</option>
 					<option value="id">ID</option>
 					<option value="owner">Owner</option>
 					<option value="creationDate">Creation date</option>
-					<option value="areaOfProduction">Area of production</option>
+					<option value="areaOfProduction">Prod area</option>
 				</select>
-
-				<div class="w-9/12 input-group input-group-divider grid-cols-[auto_1fr_auto]">
-					<div class="input-group-shim">
-						<Icon icon="lucide:search" />
-					</div>
-					<input type="search" placeholder="Filter ..." bind:value={searchString} />
-					<button class="variant-filled-secondary" on:click={() => updateUrlState(true)}>
-						Submit
-					</button>
-				</div>
 			</div>
 		</div>
 

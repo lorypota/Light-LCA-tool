@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Alert from '$lib/components/Alert.svelte';
-	import { AlertType, ProjectAreaOfProduction, ProjectStatus } from '$lib/interfaces';
+	import { AlertType, ProjectAreaOfProduction } from '$lib/interfaces';
 	import page_indicator from '$lib/page_indicator';
 	import Icon from '@iconify/svelte';
-	import type { ActionData, PageData } from './$types';
+	import type { ActionData } from './$types';
 
 	$page_indicator = `Creation`;
 
