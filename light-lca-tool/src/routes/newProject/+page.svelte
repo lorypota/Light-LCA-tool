@@ -36,16 +36,6 @@
 		/>
 	</div>
 	<div class="flex items-center">
-		<label class="w-1/3" for="creationDate">Creation date:</label>
-		<input
-			id="creationDate"
-			name="creationDate"
-			type="Date"
-			class="input variant-form-material flex-1"
-			required
-		/>
-	</div>
-	<div class="flex items-center">
 		<label class="w-1/3" for="areaOfProduction">Area of production:</label>
 		<select
 			id="areaOfProduction"
@@ -57,7 +47,6 @@
 			{/each}
 		</select>
 	</div>
-	<input type="text" name="status" value={ProjectStatus.Draft} hidden />
 	<div class="flex justify-center">
 		<button class="btn variant-filled w-2/3">
 			<span><Icon icon="lucide:save" inline={true} /></span>

@@ -4,9 +4,10 @@ import { getProjectByID, updateProjectByID } from '$lib/db/projects';
 import type { Project, ProjectAreaOfProduction, ProjectStatus } from '$lib/interfaces';
 import { functionMongoWrapper } from '$lib/db/mongo';
 import { PROJECTS_COLLECTION } from '$lib/const';
+import { serializeProject } from '$lib/utils';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const project = await functionMongoWrapper(
+	const project: Project = await functionMongoWrapper(
 		PROJECTS_COLLECTION,
 		getProjectByID,
 		params.project_id
@@ -40,9 +41,12 @@ export const actions: Actions = {
 			creationDate: creationDate,
 			areaOfProduction: areaOfProduction,
 			status: projectStatus
-		} as Partial<Project>;
+		} as Project;
 
-		await functionMongoWrapper(PROJECTS_COLLECTION, updateProjectByID, { project_id, project });
+		await functionMongoWrapper(PROJECTS_COLLECTION, updateProjectByID, {
+			_id: project_id,
+			project
+		});
 		return { success: true, message: 'Project updated' };
 	}
 } satisfies Actions;

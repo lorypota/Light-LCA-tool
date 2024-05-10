@@ -1,4 +1,5 @@
-import type { Project, ProjectStatus } from '$lib/interfaces';
+import { ProjectAreaOfProduction, ProjectStatus, type Project } from '$lib/interfaces';
+import { BSON, type ObjectId } from 'mongodb';
 
 const buildSearchQuery = (filter: string, searchString: string) => {
 	const query: any = {};
@@ -32,9 +33,8 @@ export const getProjectsArray = async (
 				name: 1,
 				owner: 1,
 				creationDate: 1,
-				id: 1,
-				areaOfProduction: 1,
-				_id: 0
+				_id: 1,
+				areaOfProduction: 1
 			}
 		})
 		.toArray();
@@ -47,22 +47,42 @@ export const countProjects = async (projects: any, { filter, searchString }: Pro
 	return await projects.countDocuments(query);
 };
 
-export const getProjectByID = async (projects: any, id: string) => {
-	return await projects.findOne({ id }, { projection: { _id: 0 } });
+export const getProjectByID = async (projects: any, _id: string) => {
+	return await projects.findOne({ _id: new BSON.ObjectId(_id) }, { projection: { _id: 0 } });
 };
 
 interface UpdateProjectByIDArgs {
-	id: string;
-	project: Partial<Project>;
+	_id: string;
+	project: Project;
 }
-export const updateProjectByID = async (projects: any, { id, project }: UpdateProjectByIDArgs) => {
-	return await projects.updateOne({ id }, { $set: project });
+export const updateProjectByID = async (projects: any, { _id, project }: UpdateProjectByIDArgs) => {
+	return await projects.updateOne({ _id: new BSON.ObjectId(_id) }, { $set: project });
 };
 
 interface ChangeStatusByIDArgs {
-	id: string;
+	_id: string;
 	newStatus: ProjectStatus;
 }
-export const changeStatusByID = async (projects: any, { id, newStatus }: ChangeStatusByIDArgs) => {
-	return await projects.updateOne({ id }, { $set: { status: newStatus } });
+export const changeStatusByID = async (projects: any, { _id, newStatus }: ChangeStatusByIDArgs) => {
+	return await projects.updateOne({ _id: new BSON.ObjectId(_id) }, { $set: { status: newStatus } });
+};
+
+interface CreateProjectArgs {
+	name: string;
+	owner: string;
+	areaOfProduction: ProjectAreaOfProduction;
+}
+export const createNewProject = async (
+	projects: any,
+	{ name, owner, areaOfProduction }: CreateProjectArgs
+) => {
+	const newProject: Partial<Project> = {
+		name,
+		owner,
+		areaOfProduction,
+		creationDate: new Date().toISOString(),
+		status: ProjectStatus.Draft
+	};
+
+	await projects.insertOne(newProject);
 };

@@ -3,6 +3,7 @@ import type { PageServerLoad } from './$types';
 import { functionMongoWrapper } from '$lib/db/mongo';
 import { PROJECTS_COLLECTION } from '$lib/const';
 import { error } from '@sveltejs/kit';
+import { serializeProjects } from '$lib/utils';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const limit = Number(url.searchParams.get('limit')) || 10;
@@ -24,12 +25,14 @@ export const load: PageServerLoad = async ({ url }) => {
 			error(400, { message: 'Bad request' });
 		}
 
-		const projectInfos = await functionMongoWrapper(PROJECTS_COLLECTION, getProjectsArray, {
+		let projectInfos = await functionMongoWrapper(PROJECTS_COLLECTION, getProjectsArray, {
 			filter,
 			searchString,
 			limit,
 			skip
 		});
+
+		projectInfos = serializeProjects(projectInfos);
 
 		return { projectInfos, totalProjects };
 	} catch {

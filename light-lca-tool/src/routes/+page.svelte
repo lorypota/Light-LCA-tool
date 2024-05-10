@@ -36,7 +36,7 @@
 		return {
 			head: ['name', 'owner', 'Creation date', 'Area of production'],
 			body: tableMapperValues(projectsArray, ['name', 'owner', 'creationDate', 'areaOfProduction']),
-			meta: tableMapperValues(projectsArray, ['id']),
+			meta: tableMapperValues(projectsArray, ['_id']),
 			foot: [`Total lines: ${totalProjects}`]
 		};
 	};

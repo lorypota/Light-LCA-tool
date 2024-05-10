@@ -1,3 +1,5 @@
+import type { ObjectId } from 'mongodb';
+
 export enum AlertType {
 	success = 'variant-filled-success',
 	error = 'variant-filled-error'
@@ -24,12 +26,12 @@ export enum ProjectStatus {
 }
 
 export interface Project {
-	id: string;
+	_id: ObjectId;
 	name: string;
 	owner: string;
 	creationDate?: Date | string;
+	areaOfProduction?: ProjectAreaOfProduction;
 	status?: ProjectStatus;
-	areaOfProduction?: ProjectAreaOfProduction; // TODO: enum
 	efficiency?: number;
 	useEnergyMix?: number;
 	electricityUse?: number;
