@@ -24,12 +24,12 @@ export enum ProjectStatus {
 }
 
 export interface Project {
-	id: string;
+	id?: string;
 	name: string;
 	owner: string;
 	creationDate?: Date | string;
 	status?: ProjectStatus;
-	areaOfProduction?: ProjectAreaOfProduction; // TODO: enum
+	areaOfProduction?: ProjectAreaOfProduction;
 	efficiency?: number;
 	useEnergyMix?: number;
 	electricityUse?: number;
