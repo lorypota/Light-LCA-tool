@@ -3,7 +3,6 @@
 	import { areProjectsEqual, formatDate } from '$lib/utils';
 	import { AlertType, ProjectAreaOfProduction, ProjectStatus, type Project } from '$lib/interfaces';
 	import Icon from '@iconify/svelte';
-	import { tick } from 'svelte';
 	import Alert from '$lib/components/Alert.svelte';
 
 	export let data: PageData;
@@ -13,31 +12,14 @@
 		(value) => typeof value === 'string'
 	);
 
-	let showSaveButton = false;
+	let projectToModify = { ...data.projectWithoutDate };
+	let oldProject = { ...data.projectWithoutDate };
 
-	let oldProject = { ...data.project };
-	let oldDateFormatted: string | Date;
-	if (oldProject.creationDate != null) {
-		oldDateFormatted = formatDate(oldProject.creationDate);
-	}
-	let projectToModify: Project = { ...oldProject };
+	let oldCreationDateString: string = formatDate(data.creationDate ?? new Date());
+	let creationDateString: string = formatDate(data.creationDate ?? new Date());
 
 	$: showSaveButton =
-		!areProjectsEqual(oldProject, projectToModify) ||
-		(projectToModify.creationDate != undefined &&
-			formatDate(oldDateFormatted) != formatDate(projectToModify.creationDate));
-
-	let ref: HTMLInputElement;
-	async function handleFocusDate() {
-		ref.type = 'Date';
-		await tick();
-		ref.select();
-	}
-	async function handleBlurDate() {
-		ref.type = 'text';
-		await tick();
-		ref.textContent = formatDate(oldDateFormatted);
-	}
+		!areProjectsEqual(oldProject, projectToModify) || oldCreationDateString !== creationDateString;
 
 	export let form: ActionData;
 </script>
@@ -81,13 +63,9 @@
 			<input
 				id="creationDate"
 				name="creationDate"
-				type="text"
-				maxlength="36"
+				type="Date"
 				class="input variant-form-material flex-1"
-				on:focus={async () => handleFocusDate()}
-				on:blur={async () => handleBlurDate()}
-				bind:this={ref}
-				bind:value={oldDateFormatted}
+				bind:value={creationDateString}
 				required
 			/>
 		</div>
@@ -105,10 +83,10 @@
 			</select>
 		</div>
 		<div class="flex items-center">
-			<label class="w-1/3" for="projectStatus">Project status:</label>
+			<label class="w-1/3" for="status">Status:</label>
 			<select
-				id="projectStatus"
-				name="projectStatus"
+				id="status"
+				name="status"
 				class="select variant-form-material flex-1"
 				bind:value={projectToModify.status}
 			>
