@@ -1,4 +1,4 @@
-import { describe, it, beforeAll, afterAll, beforeEach, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, beforeEach, expect, vi } from 'vitest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { MongoClient, ObjectId } from 'mongodb';
 import {
@@ -14,12 +14,6 @@ let mongod: MongoMemoryServer;
 let client: MongoClient;
 let db: any;
 let projectsCollection: any;
-
-// TODO: finish these tests once the pull request has been accepted
-
-interface ProjectMongo extends Project {
-	_id?: ObjectId | String;
-}
 
 beforeAll(async () => {
 	mongod = await MongoMemoryServer.create();
@@ -41,7 +35,7 @@ beforeEach(async () => {
 
 describe('projects.ts', () => {
 	it('should get projects array', async () => {
-		const mockProjects: Array<ProjectMongo> = [
+		const mockProjects: Array<Partial<Project>> = [
 			{
 				name: 'Test Project',
 				owner: 'Owner',
@@ -55,11 +49,13 @@ describe('projects.ts', () => {
 				areaOfProduction: ProjectAreaOfProduction.Europe
 			}
 		];
-		await projectsCollection.insertMany(mockProjects);
-		const result = await getProjectsArray(projectsCollection, 10);
 
-		mockProjects.forEach((project: ProjectMongo) => {
-			delete project._id;
+		await projectsCollection.insertMany(mockProjects);
+		const result = await getProjectsArray(projectsCollection, {
+			limit: 10,
+			skip: 0,
+			filter: '',
+			searchString: ''
 		});
 
 		expect(result).toEqual(mockProjects);
@@ -67,7 +63,7 @@ describe('projects.ts', () => {
 
 	it('should count projects', async () => {
 		await projectsCollection.insertMany([{ name: 'Project 1' }, { name: 'Project 2' }]);
-		const result = await countProjects(projectsCollection);
+		const result = await countProjects(projectsCollection, { filter: '', searchString: '' });
 		expect(result).toBe(2);
 	});
 });

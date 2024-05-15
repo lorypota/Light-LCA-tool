@@ -1,25 +1,22 @@
 import { describe, it, beforeAll, afterAll, expect } from 'vitest';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { MongoClient } from 'mongodb';
 import { getMongoClient, closeMongoClient, functionMongoWrapper } from './mongo';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 let mongod: MongoMemoryServer;
-let originalMongoUrl: string;
 
 beforeAll(async () => {
-	mongod = await MongoMemoryServer.create();
-	const uri = mongod.getUri();
-
-	// Backup the original Mongo URL and set it to the in-memory server URI
-	originalMongoUrl = process.env.MONGO_URL!;
-	process.env.MONGO_URL = uri;
+	mongod = await MongoMemoryServer.create({
+		instance: {
+			ip: '127.0.0.1',
+			port: 20406,
+			dbName: 'test'
+		}
+	});
 });
 
 afterAll(async () => {
 	await mongod.stop();
-
-	// Restore the original Mongo URL
-	process.env.MONGO_URL = originalMongoUrl;
 });
 
 describe('mongo.ts', () => {

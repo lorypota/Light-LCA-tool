@@ -16,7 +16,11 @@ export const areProjectsEqual = (
 	}
 
 	for (const key of keys1) {
-		if (project1[key] !== project2[key]) {
+		if (key == 'creationDate') {
+			if (project1[key]?.getTime() !== project2[key]?.getTime()) {
+				return false;
+			}
+		} else if (project1[key] !== project2[key]) {
 			return false;
 		}
 	}

@@ -1,13 +1,16 @@
 import { it, expect } from 'vitest';
 import { areProjectsEqual, formatDate } from './utils';
 import { ProjectAreaOfProduction, ProjectStatus, type Project } from './interfaces';
+import { ObjectId } from 'mongodb';
 
 it('compares equality between two projects', () => {
+	const _id = new ObjectId();
+
 	let project1: Project = {
 		name: 'Project 1',
 		owner: 'Owner 1',
-		id: '1',
-		creationDate: '2021-01-01',
+		_id,
+		creationDate: new Date('2021-01-01'),
 		areaOfProduction: ProjectAreaOfProduction.China,
 		status: ProjectStatus.Completed,
 		efficiency: 31,
@@ -18,8 +21,8 @@ it('compares equality between two projects', () => {
 	let project2: Project = {
 		name: 'Project 1',
 		owner: 'Owner 1',
-		id: '1',
-		creationDate: '2021-01-01',
+		_id,
+		creationDate: new Date('2021-01-01'),
 		areaOfProduction: ProjectAreaOfProduction.China,
 		status: ProjectStatus.Completed,
 		efficiency: 31,
@@ -31,11 +34,13 @@ it('compares equality between two projects', () => {
 });
 
 it('compares inequality between two projects with different names', () => {
+	const _id = new ObjectId();
+
 	let project1: Project = {
 		name: 'Project 1',
 		owner: 'Owner 1',
-		id: '1',
-		creationDate: '2021-01-01',
+		_id,
+		creationDate: new Date('2021-01-01'),
 		areaOfProduction: ProjectAreaOfProduction.China,
 		status: ProjectStatus.Completed,
 		efficiency: 31,
@@ -46,8 +51,8 @@ it('compares inequality between two projects with different names', () => {
 	let project2: Project = {
 		name: 'Project 2',
 		owner: 'Owner 1',
-		id: '1',
-		creationDate: '2021-01-01',
+		_id,
+		creationDate: new Date('2021-01-01'),
 		areaOfProduction: ProjectAreaOfProduction.China,
 		status: ProjectStatus.Completed,
 		efficiency: 31,
@@ -59,11 +64,13 @@ it('compares inequality between two projects with different names', () => {
 });
 
 it('compares inequality between two projects with missing properties', () => {
+	const _id = new ObjectId();
+
 	let project1: Project = {
 		name: 'Project 1',
 		owner: 'Owner 1',
-		id: '1',
-		creationDate: '2021-01-01',
+		_id,
+		creationDate: new Date('2021-01-01'),
 		areaOfProduction: ProjectAreaOfProduction.China,
 		status: ProjectStatus.Completed,
 		efficiency: 31,
@@ -74,8 +81,8 @@ it('compares inequality between two projects with missing properties', () => {
 	let project2: Project = {
 		name: 'Project 1',
 		owner: 'Owner 1',
-		id: '1',
-		creationDate: '2021-01-01',
+		_id,
+		creationDate: new Date('2021-01-01'),
 		areaOfProduction: ProjectAreaOfProduction.China,
 		status: ProjectStatus.Completed,
 		efficiency: 31,
@@ -91,11 +98,13 @@ it('compares inequality between two projects with missing properties', () => {
 });
 
 it('compares equality between two projects with missing properties', () => {
+	const _id = new ObjectId();
+
 	let project1: Project = {
 		name: 'Project 1',
 		owner: 'Owner 1',
-		id: '1',
-		creationDate: '2021-01-01',
+		_id,
+		creationDate: new Date('2021-01-01'),
 		areaOfProduction: ProjectAreaOfProduction.China,
 		status: ProjectStatus.Completed,
 		efficiency: 31,
@@ -106,8 +115,8 @@ it('compares equality between two projects with missing properties', () => {
 	let project2: Project = {
 		name: 'Project 1',
 		owner: 'Owner 1',
-		id: '1',
-		creationDate: '2021-01-01',
+		_id,
+		creationDate: new Date('2021-01-01'),
 		areaOfProduction: ProjectAreaOfProduction.China,
 		status: ProjectStatus.Completed,
 		efficiency: 31,
@@ -132,7 +141,6 @@ it('formats a Date type with time into the format YYYY-MM-DD', () => {
 
 it('formats a Date type with different time zone into the format YYYY-MM-DD', () => {
 	const date = new Date('2024-09-20T00:00:00-03:00');
-	console.log(date);
 	expect(formatDate(date)).toBe('2024-09-20');
 });
 
