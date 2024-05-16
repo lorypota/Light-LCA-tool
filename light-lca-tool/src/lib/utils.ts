@@ -8,12 +8,23 @@ export const areProjectsEqual = (
 	project1: Partial<ProjectComparison>,
 	project2: Partial<ProjectComparison>
 ): boolean => {
-	const keys = Object.keys(project1);
-	for (const key of keys) {
-		if (project1[key] !== project2[key]) {
+	const keys1 = Object.keys(project1);
+	const keys2 = Object.keys(project2);
+
+	if (keys1.length !== keys2.length) {
+		return false;
+	}
+
+	for (const key of keys1) {
+		if (key == 'creationDate') {
+			if (project1[key]?.getTime() !== project2[key]?.getTime()) {
+				return false;
+			}
+		} else if (project1[key] !== project2[key]) {
 			return false;
 		}
 	}
+
 	return true;
 };
 

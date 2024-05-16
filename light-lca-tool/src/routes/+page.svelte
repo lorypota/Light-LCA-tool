@@ -42,7 +42,7 @@
 
 	const onSelected = (event: CustomEvent) => {
 		const projectID = event.detail[0];
-		goto(`/project/${projectID}`);
+		goto(`/project/${projectID}/general`);
 	};
 
 	const onPageChange = (e: CustomEvent) => {

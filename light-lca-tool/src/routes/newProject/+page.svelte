@@ -14,6 +14,7 @@
 	export let form: ActionData;
 </script>
 
+<h1 class="text-2xl font-bold mb-4 align-left w-full">Create a new project</h1>
 <form class="w-full flex flex-col gap-4" method="POST">
 	<Alert
 		title="Success"
@@ -24,7 +25,6 @@
 		redirectName="selection"
 	/>
 
-	<h1 class="text-2xl font-bold mb-4">Create a new project</h1>
 	<div class="flex items-center">
 		<label class="w-1/3" for="name">Project name:</label>
 		<input

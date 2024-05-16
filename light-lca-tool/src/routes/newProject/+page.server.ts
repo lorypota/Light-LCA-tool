@@ -19,6 +19,6 @@ export const actions: Actions = {
 		} as Partial<Project>;
 
 		await functionMongoWrapper(PROJECTS_COLLECTION, createNewProject, project);
-		return { success: true, message: 'Project updated' };
+		return { success: true, message: 'Project created' };
 	}
 } satisfies Actions;
