@@ -29,3 +29,17 @@ The main goal of this application is to increase worker awareness about the envi
 ## Current Status
 
 The Light LCA Tool is currently in development.
+
+## Future Developments
+
+To continue developing the tool, the following tasks should be completed:
+
+- Add assessment and composition page under the project.
+- Fix Playwright tests to use mongodb-memory-server instead of MongoDB.
+- Implement auth system.
+
+## Usage
+
+- **To run in development**: `npm run dev`
+- **To run tests**: `npm run test`
+- **To build**: `npm run build`
