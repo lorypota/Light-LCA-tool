@@ -1,9 +1,9 @@
 import { MONGO_URL, MONGO_RETRY_TIMES, MONGO_RETRY_WAIT_SECONDS } from '$env/static/private';
 import { MongoClient } from 'mongodb';
 
-export const getMongoClient = async () =>
-	await MongoClient.connect(MONGO_URL, { connectTimeoutMS: 100 });
-
+export const getMongoClient = async () => {
+	return await MongoClient.connect(MONGO_URL, { connectTimeoutMS: 100 });
+};
 export const closeMongoClient = async (client: MongoClient | null) => {
 	if (client !== null) await client.close();
 };
@@ -29,7 +29,7 @@ export const functionMongoWrapper = async <R>(
 		try {
 			client = await getMongoClient();
 			// connected to MongoDB
-			let collection = client.db().collection(collectionName);
+			const collection = client.db().collection(collectionName);
 			if (params === null) result = await func(collection);
 			else result = await func(collection, params);
 			await closeMongoClient(client);

@@ -1,20 +1,48 @@
 import type { Project } from './interfaces';
 
-export const areProjectsEqual = (project1: Project, project2: Project): boolean => {
-	return (
-		project1.name === project2.name &&
-		project1.owner === project2.owner &&
-		project1.creationDate === project2.creationDate &&
-		project1.areaOfProduction === project2.areaOfProduction &&
-		project1.status === project2.status &&
-		project1.efficiency === project2.efficiency &&
-		project1.electricityUse === project2.electricityUse &&
-		project1.id === project2.id &&
-		project1.useEnergyMix === project2.useEnergyMix
-	);
+interface ProjectComparison extends Project {
+	[key: string]: any;
+}
+
+export const areProjectsEqual = (
+	project1: Partial<ProjectComparison>,
+	project2: Partial<ProjectComparison>
+): boolean => {
+	const keys1 = Object.keys(project1);
+	const keys2 = Object.keys(project2);
+
+	if (keys1.length !== keys2.length) {
+		return false;
+	}
+
+	for (const key of keys1) {
+		if (key == 'creationDate') {
+			if (project1[key]?.getTime() !== project2[key]?.getTime()) {
+				return false;
+			}
+		} else if (project1[key] !== project2[key]) {
+			return false;
+		}
+	}
+
+	return true;
 };
 
-export const formatDate = (date: Date | string): string => {
-	if (typeof date == 'string') return date;
+export const formatDate = (date: Date | undefined): string => {
+	if (!date) {
+		return new Date().toISOString().split('T')[0];
+	}
 	return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 };
+
+export function serializeProject(project: Project) {
+	return {
+		...project,
+		_id: project._id.toString(),
+		creationDate: formatDate(project.creationDate)
+	};
+}
+
+export function serializeProjects(projects: Project[]) {
+	return projects.map(serializeProject);
+}

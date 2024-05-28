@@ -47,8 +47,8 @@
 		</div>
 	</svelte:fragment>
 
-	<div class=" h-full">
-		<div class="mx-auto flex flex-col justify-center items-center w-3/4 h-full">
+	<div class="h-full">
+		<div class="mx-auto flex flex-col justify-center items-center w-3/4 h-full py-6">
 			<slot />
 		</div>
 	</div>
